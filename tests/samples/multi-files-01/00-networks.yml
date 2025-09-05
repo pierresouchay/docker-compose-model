@@ -8,3 +8,6 @@ networks:
   backend:
     # Use a custom driver
     driver: custom-driver
+configs:
+  my/conf:
+    content: hello world

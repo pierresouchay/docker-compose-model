@@ -30,7 +30,9 @@ class Compose:
         self.volumes: dict[str, RootVolume] = {}
 
 
-def parse_port(source_file: str, port_data: Union[float, str, spec.Ports]) -> Port:
+def parse_port(
+    source_file: str, port_data: Union[float, str, spec.Ports]
+) -> Optional[Port]:
     if isinstance(port_data, float):
         return Port(source_file, "0.0.0.0", str(int(port_data)), str(int(port_data)))
     if isinstance(port_data, str):
@@ -41,9 +43,6 @@ def parse_port(source_file: str, port_data: Union[float, str, spec.Ports]) -> Po
             host_ip = match.group("host_ip")
             host_port = match.group("host_port")
             container_port = match.group("container_port")
-            # protocol = match.group("protocol")
-
-            assert container_port, "Invalid port format, aborting."
 
             if container_port is not None and host_port is None:
                 host_port = container_port
@@ -61,32 +60,19 @@ def parse_port(source_file: str, port_data: Union[float, str, spec.Ports]) -> Po
                 source_port=host_port,
                 container_port=container_port,
             )
-    elif isinstance(port_data, spec.Ports):
-        assert port_data.target is not None, "Invalid port format, aborting."
-
-        if isinstance(port_data.published, (str, int)):
-            host_port = str(port_data.published)
-
-        if isinstance(port_data.target, int):
-            container_port = str(port_data.target)
-
-        host_ip = port_data.host_ip
-
-        if container_port is not None and host_port is None:
-            host_port = container_port
-
-        if host_ip is not None:
-            return Port(
-                source_file=source_file,
-                host=host_ip,
-                source_port=host_port,
-                container_port=container_port,
-            )
+        return None
+    if isinstance(port_data, spec.Ports):
+        host_ip = port_data.host_ip if port_data.host_ip else "0.0.0.0"
+        host_port = str(
+            port_data.published if port_data.published else port_data.published
+        )
+        if not port_data.target:
+            return None
         return Port(
             source_file=source_file,
-            host="0.0.0.0",
+            host=host_ip,
             source_port=host_port,
-            container_port=container_port,
+            container_port=str(port_data.target),
         )
     raise RuntimeError("LogicError while parsing port")
 
@@ -156,9 +142,9 @@ class Parser:
         service_ports: list[Port] = []
         if service_data.ports is not None:
             for port_data in service_data.ports:
-                service_ports.append(
-                    parse_port(source_file=source_file, port_data=port_data)
-                )
+                port = parse_port(source_file=source_file, port_data=port_data)
+                if port:
+                    service_ports.append(port)
 
         service_depends_on = _unwrap_depends_on(service_data.depends_on)
 
@@ -240,9 +226,11 @@ class Parser:
 
         expose: list[str] = []
         if service_data.expose is not None:
-            for port in service_data.expose:
+            for ex_port in service_data.expose:
                 # to avoid to have values like 8885.0 for instance, cast floats into int first
-                port_str = str(int(port)) if isinstance(port, float) else str(port)
+                port_str = (
+                    str(int(ex_port)) if isinstance(ex_port, float) else str(ex_port)
+                )
                 expose.append(port_str)
 
         profiles: list[str] = []
