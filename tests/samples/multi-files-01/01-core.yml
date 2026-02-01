@@ -60,6 +60,7 @@ services:
         max-size: 10m
     restart: always
     shm_size: ${POSTGRES_SHARED_BUFFERS:-2GB}
+    stop_grace_period: 1m30s
     volumes:
       - postgresql-volume:/var/lib/postgresql/data
   postgres-exporter:

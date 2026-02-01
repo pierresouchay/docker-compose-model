@@ -4,11 +4,12 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel
+
+from .duration import GoDuration
 
 # pylint: disable=invalid-name
 
@@ -132,12 +133,12 @@ class Healthcheck(BaseModel):
         extra="forbid",
     )
     disable: Optional[bool] = None
-    interval: Optional[Union[str, timedelta]] = None
+    interval: Optional[GoDuration] = None
     retries: Optional[float] = None
     test: Optional[Union[str, List[str]]] = None
-    timeout: Optional[Union[str, timedelta]] = None
-    start_period: Optional[Union[str, timedelta]] = None
-    start_interval: Optional[Union[str, timedelta]] = None
+    timeout: Optional[GoDuration] = None
+    start_period: Optional[GoDuration] = None
+    start_interval: Optional[GoDuration] = None
 
 
 class Action(Enum):
@@ -167,9 +168,9 @@ class RollbackConfig(BaseModel):
         extra="forbid",
     )
     parallelism: Optional[int] = None
-    delay: Optional[timedelta] = None
+    delay: Optional[GoDuration] = None
     failure_action: Optional[str] = None
-    monitor: Optional[timedelta] = None
+    monitor: Optional[GoDuration] = None
     max_failure_ratio: Optional[float] = None
     order: Optional[Order] = None
 
@@ -179,9 +180,9 @@ class UpdateConfig(BaseModel):
         extra="forbid",
     )
     parallelism: Optional[int] = None
-    delay: Optional[timedelta] = None
+    delay: Optional[GoDuration] = None
     failure_action: Optional[str] = None
-    monitor: Optional[timedelta] = None
+    monitor: Optional[GoDuration] = None
     max_failure_ratio: Optional[float] = None
     order: Optional[Order] = None
 
@@ -200,9 +201,9 @@ class RestartPolicy(BaseModel):
         extra="forbid",
     )
     condition: Optional[str] = None
-    delay: Optional[timedelta] = None
+    delay: Optional[GoDuration] = None
     max_attempts: Optional[int] = None
-    window: Optional[timedelta] = None
+    window: Optional[GoDuration] = None
 
 
 class Preference(BaseModel):
@@ -590,7 +591,7 @@ class Service(BaseModel):
     secrets: Optional[ServiceConfigOrSecret] = None
     sysctls: Optional[ListOrDict] = None
     stdin_open: Optional[bool] = None
-    stop_grace_period: Optional[timedelta] = None
+    stop_grace_period: Optional[GoDuration] = None
     stop_signal: Optional[str] = None
     storage_opt: Optional[Dict[str, Any]] = None
     tmpfs: Optional[StringOrList] = None
