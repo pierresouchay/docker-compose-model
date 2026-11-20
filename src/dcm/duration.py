@@ -88,6 +88,7 @@ class GoDuration(timedelta):
 
         return timedelta(seconds=total_seconds)
 
+    # pylint: disable=W0613
     @classmethod
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler

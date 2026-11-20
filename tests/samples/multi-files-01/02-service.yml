@@ -48,6 +48,9 @@ services:
         max-file: '5'
         max-size: 10m
     restart: always
+    ulimits:
+      nofile:
+        soft: ${MY_VAR:-8192}
     volumes:
       - ./volumes/data/:/mnt/data
       - ./volumes/bundle/raven:/mnt/data/bundle

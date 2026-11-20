@@ -66,7 +66,7 @@ line-length = 88
 target-version = "py39"
 
 [tool.pylint.messages_control]
-max-line-length = 88
+max-line-length = 160
 
 disable = [
   "missing-docstring",
