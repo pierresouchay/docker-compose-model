@@ -332,12 +332,12 @@ class Ulimits1(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    hard: int
-    soft: int
+    hard: Optional[Union[str, int]] = None
+    soft: Optional[Union[str, int]] = None
 
 
-class Ulimits(RootModel[Dict[str, Union[int, Ulimits1]]]):
-    root: Dict[str, Union[int, Ulimits1]]
+class Ulimits(RootModel[Dict[str, Union[str, int, Ulimits1]]]):
+    root: Dict[str, Union[str, int, Ulimits1]]
 
 
 class Constraints(RootModel[Any]):
