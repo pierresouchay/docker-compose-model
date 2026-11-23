@@ -262,6 +262,15 @@ class Parser:
                                 cgroup_permissions=split_data[2],
                             )
                         )
+                elif isinstance(device_data, dict):
+                    devices.append(
+                        Device(
+                            source_file=source_file,
+                            host_path=device_data["source"],
+                            container_path=device_data["target"],
+                            cgroup_permissions=device_data.get("permissions", "rwm"),
+                        )
+                    )
 
         return Service(
             source_file=source_file,

@@ -7,6 +7,15 @@ from datetime import timedelta
 from dcm import parse_compose_files
 
 
+def test_docker_compose_config():
+    """Test that docker-compose configuration is parsed correctly."""
+    sample_dir = os.path.join(os.path.dirname(__file__), "samples/single-file/*.yml")
+    files = list(glob.glob(pathname=sample_dir))
+    for file in files:
+        compose = parse_compose_files(file)
+        assert compose
+
+
 def test_healthcheck_duration_parsing():
     """Test that healthcheck durations are correctly parsed from docker-compose files."""
     sample_dir = os.path.join(os.path.dirname(__file__), "samples/multi-files-01/*.yml")
