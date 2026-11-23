@@ -1,0 +1,85 @@
+---
+services:
+  cadvisor:
+    annotations:
+      nfo: Statistics about containers to be collected by prometheus
+    command:
+      - --docker_only
+      - --max_procs=1
+      - --disable_root_cgroup_stats
+      - --store_container_labels=false
+    deploy:
+      resources:
+        limits:
+          memory: "402653184"
+    devices:  # This is how docker compose config renders it (likely a bug)
+      - source: /dev/kmsg
+        target: /dev/kmsg
+        permissions: rwm
+    dns_opt:
+      - ndots:0
+    expose:
+      - "8080"
+    group_add:
+      - "999"
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - -nv
+        - -t1
+        - --spider
+        - http://localhost:8080/healthz
+      timeout: 10s
+      interval: 10s
+      retries: 10
+      start_period: 30s
+    image: cadvisor:0.60.5-1
+    labels:
+      prometheus.port: "8080"
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 10m
+    networks:
+      default: null
+    privileged: true
+    restart: always
+    user: root
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/run
+        target: /var/run
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /sys
+        target: /sys
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/lib/docker/
+        target: /var/lib/docker
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /dev/disk/
+        target: /dev/disk
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        bind:
+          create_host_path: true

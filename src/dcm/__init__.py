@@ -1,4 +1,4 @@
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 from .duration import GoDuration
 from .parser import parse_compose_files

@@ -7,6 +7,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    devices:
+      - /dev/kmsg:/dev/kmsg
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-pguser}:${POSTGRES_PASSWORD?}@${POSTGRES_HOST:-postgres}:5432/${POSTGRES_DB:-pgdb}
       POSTGRES_DB: ${POSTGRES_DB:-pgdb}
@@ -29,6 +31,8 @@ services:
       [%p] %q%u@%d ''
 
       '
+    devices:
+      - /dev/kmsg:/dev/kmsg:rwm
     environment:
       POSTGRES_COMMIT_DELAY: ${POSTGRES_COMMIT_DELAY:-4000}
       POSTGRES_DB: ${POSTGRES_DB:-pgdb}

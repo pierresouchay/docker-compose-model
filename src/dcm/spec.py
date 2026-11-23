@@ -544,7 +544,7 @@ class Service(BaseModel):
     credential_spec: Optional[CredentialSpec] = None
     depends_on: Optional[Union[ListOfStrings, Dict[str, DependsOn]]] = None
     device_cgroup_rules: Optional[ListOfStrings] = None
-    devices: Optional[List[str]] = None
+    devices: Optional[List[Union[dict[str, Any], str]]] = None
     dns: Optional[StringOrList] = None
     dns_opt: Optional[List[str]] = None
     dns_search: Optional[StringOrList] = None
